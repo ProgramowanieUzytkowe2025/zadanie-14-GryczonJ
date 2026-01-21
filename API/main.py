@@ -64,7 +64,7 @@ def create_movie(movie: MovieCreate, db: Session = Depends(get_db)):
 #     if not movie:
 #         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Film nie został znaleziony")
 #     return movie
-@app.get("/filmy/{movie_id}", response_model=MovieRead)
+@app.get("/filmy/{movie_id}", response_model=MovieRead, tags=["Filmy"])
 def read_movie(movie_id: int, db: Session = Depends(get_db)):
     print(f"Fetching movie with ID: {movie_id}")
     print(f"Database session: {db}")
@@ -90,7 +90,7 @@ def read_movie(movie_id: int, db: Session = Depends(get_db)):
 #     movies = query.order_by(Movie.id).offset(skip).limit(limit).all()
 #     return movies
 
-@app.get("/filmy/", response_model=List[MovieRead])
+@app.get("/filmy/", response_model=List[MovieRead], tags=["Filmy"])
 def read_movies(
     skip: int = 0,
     limit: int = 100,
@@ -138,15 +138,22 @@ def update_movie(movie_id: int, movie: MovieUpdate, db: Session = Depends(get_db
     db.refresh(db_movie)
     return db_movie
 
-
-
 # --- DELETE ---
 @app.delete("/filmy/{movie_id}", status_code=status.HTTP_204_NO_CONTENT, tags=["Filmy"])
 def delete_movie(movie_id: int, db: Session = Depends(get_db)):
     db_movie = db.query(Movie).filter(Movie.id == movie_id).first()
+    
     if not db_movie:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Film nie został znaleziony")
+        raise HTTPException(status_code=404, detail="Film nie został znaleziony w bazie danych")
+
+    # REALIZACJA PUNKTU 8b: Blokada usuwania rekordów z wartością false
+    if db_movie.dostepny_do_wypozyczenia == False:
+        raise HTTPException(
+            status_code=400, 
+            detail="Nie można usunąć filmu, który ma status: Niedostępny (wymóg biznesowy API)."
+        )
+
     db.delete(db_movie)
     db.commit()
-    return  {}
+    return {}
 

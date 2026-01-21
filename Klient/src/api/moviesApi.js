@@ -60,10 +60,14 @@ export async function updateMovie(id, movie, loaderContext) {
 }
 
 // --- DELETE: usunięcie filmu ---
-export async function deleteMovie(id, loaderContext) {
-  return apiFetch(
-    `${API_URL}${id}`,
-    { method: "DELETE" },
-    loaderContext
-  );
-}
+export const deleteMovie = async (id) => {
+  const response = await fetch(`http://localhost:8000/filmy/${id}`, {
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.detail || "Wystąpił nieznany błąd");
+  }
+  return true;
+};
