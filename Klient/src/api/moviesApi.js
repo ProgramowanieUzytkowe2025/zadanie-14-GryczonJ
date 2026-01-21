@@ -1,21 +1,27 @@
 const API_URL = "http://127.0.0.1:8000/filmy/";
 
 // --- GET: lista filmów ---
-export async function fetchMovies(skip = 0, limit = 100) {
-  const response = await fetch(`${API_URL}?skip=${skip}&limit=${limit}`);
-  if (!response.ok) {
-    throw new Error("Błąd pobierania filmów");
+
+export async function fetchMovies(dostepny) {
+  let url = API_URL;
+  if (dostepny !== undefined) {
+    url += `?dostepny=${dostepny}`;
   }
-  return response.json();
+  console.log("Fetch URL:", url);
+
+  const response = await fetch(url);
+  if (!response.ok) throw new Error("Błąd przy pobieraniu filmów");
+  return await response.json();
 }
 
-// --- GET: jeden film po ID ---
 export async function fetchMovie(id) {
-  const response = await fetch(`${API_URL}${id}`);
+  const response = await fetch(`${API_URL}+${id}`);
+  console.log("Fetching movie with id:", id);
+
   if (!response.ok) {
-    throw new Error("Film nie został znaleziony");
+    throw new Error("Nie udało się pobrać filmu: " + response.statusText);
   }
-  return response.json();
+  return await response.json();
 }
 
 // --- POST: dodanie nowego filmu ---

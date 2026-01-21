@@ -1,6 +1,10 @@
 import "./MovieList.css";
+import { useNavigate } from "react-router-dom";
+
+
 
 function MovieCard({ movie, onDelete }) {
+  const navigate = useNavigate();
   return (
     <div className="movie-card">
       <h3>{movie.tytul.trim()}</h3>
@@ -17,8 +21,8 @@ function MovieCard({ movie, onDelete }) {
         <strong>Dostępny:</strong>{" "}
         {movie.dostepny_do_wypozyczenia ? "Tak" : "Nie"}
       </p>
-
-      <button className="delete-btn" onClick={() => onDelete(movie.id)}>Usuń</button>
+      <button className="edit-btn" onClick={() => navigate(`/edit/${movie.id}`)}> Edytuj </button>
+      <button className="delete-btn" onClick={() => onDelete(movie.id, movie.dostepny_do_wypozyczenia)}> Usuń</button>
     </div>
   );
 }
