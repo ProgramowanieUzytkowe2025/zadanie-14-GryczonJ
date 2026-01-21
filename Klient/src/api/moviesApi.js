@@ -1,72 +1,69 @@
-const API_URL = "http://127.0.0.1:8000/filmy/";
+import { useContext } from "react";
+import { LoaderContext } from "../contexts/LoaderContext";
+
+export const API_URL = "http://127.0.0.1:8000/filmy/";
+
+// helper fetch z loaderem
+async function apiFetch(url, options = {}, loaderContext) {
+  try {
+    loaderContext?.showLoader();
+    const response = await fetch(url, options);
+    if (!response.ok) {
+      throw new Error(`Błąd w zapytaniu API: ${response.status} ${response.statusText}`);
+    }
+    return await response.json();
+  } finally {
+    loaderContext?.hideLoader();
+  }
+}
 
 // --- GET: lista filmów ---
-
-export async function fetchMovies(dostepny) {
+export async function fetchMovies(dostepny, loaderContext) {
   let url = API_URL;
   if (dostepny !== undefined) {
     url += `?dostepny=${dostepny}`;
   }
   console.log("Fetch URL:", url);
-
-  const response = await fetch(url);
-  if (!response.ok) throw new Error("Błąd przy pobieraniu filmów");
-  return await response.json();
+  return apiFetch(url, {}, loaderContext);
 }
 
-export async function fetchMovie(id) {
-  const response = await fetch(`${API_URL}+${id}`);
+// --- GET: jeden film ---
+export async function fetchMovie(id, loaderContext) {
   console.log("Fetching movie with id:", id);
-
-  if (!response.ok) {
-    throw new Error("Nie udało się pobrać filmu: " + response.statusText);
-  }
-  return await response.json();
+  return apiFetch(`${API_URL}${id}`, {}, loaderContext);
 }
 
 // --- POST: dodanie nowego filmu ---
-export async function createMovie(movie) {
-  const response = await fetch(API_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+export async function createMovie(movie, loaderContext) {
+  return apiFetch(
+    API_URL,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(movie),
     },
-    body: JSON.stringify(movie),
-  });
-
-  if (!response.ok) {
-    throw new Error("Błąd przy tworzeniu filmu");
-  }
-
-  return response.json();
+    loaderContext
+  );
 }
 
 // --- PUT: aktualizacja filmu ---
-export async function updateMovie(id, movie) {
-  const response = await fetch(`${API_URL}${id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
+export async function updateMovie(id, movie, loaderContext) {
+  return apiFetch(
+    `${API_URL}${id}`,
+    {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(movie),
     },
-    body: JSON.stringify(movie),
-  });
-
-  if (!response.ok) {
-    throw new Error("Błąd przy aktualizacji filmu");
-  }
-
-  return response.json();
+    loaderContext
+  );
 }
 
 // --- DELETE: usunięcie filmu ---
-export async function deleteMovie(id) {
-  const response = await fetch(`${API_URL}${id}`, {
-    method: "DELETE",
-  });
-
-  if (!response.ok) {
-    throw new Error("Błąd przy usuwaniu filmu");
-  }
-
-  return true;
+export async function deleteMovie(id, loaderContext) {
+  return apiFetch(
+    `${API_URL}${id}`,
+    { method: "DELETE" },
+    loaderContext
+  );
 }

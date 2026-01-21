@@ -4,27 +4,31 @@ import MovieList from "./components/MovieList";
 import MovieForm from "./components/MovieForm";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { LoaderProvider } from "./contexts/LoaderContext";
+import Loader from "./components/Loader";
 
 function App() {
   return (
-    <Router>
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        pauseOnHover
-        draggable
-        theme="colored"
-      />
-
-      <Routes>
-        <Route path="/" element={<MovieList />} />
-        <Route path="/edit/:id" element={<MovieForm editMode={true} />} />
-        <Route path="/add" element={<MovieForm editMode={false} />} />
-      </Routes>
-    </Router>
+    <LoaderProvider>
+      <Router>
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          pauseOnHover
+          draggable
+          theme="colored"
+        />
+        <Loader />
+        <Routes>
+          <Route path="/" element={<MovieList />} />
+          <Route path="/edit/:id" element={<MovieForm editMode={true} />} />
+          <Route path="/add" element={<MovieForm editMode={false} />} />
+        </Routes>
+      </Router>
+    </LoaderProvider>
   );
 }
 

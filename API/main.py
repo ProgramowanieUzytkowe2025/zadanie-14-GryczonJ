@@ -9,6 +9,7 @@ from database import get_db
 
 from typing import Optional
 from fastapi.middleware.cors import CORSMiddleware
+import time
 
 from fastapi import Query
 import logging
@@ -67,6 +68,8 @@ def create_movie(movie: MovieCreate, db: Session = Depends(get_db)):
 def read_movie(movie_id: int, db: Session = Depends(get_db)):
     print(f"Fetching movie with ID: {movie_id}")
     print(f"Database session: {db}")
+    # Dodaj opóźnienie tutaj:
+    time.sleep(5)
     movie = db.query(Movie).filter(Movie.id == movie_id).first()
     if not movie:
         raise HTTPException(status_code=404, detail="Film nie został znaleziony")

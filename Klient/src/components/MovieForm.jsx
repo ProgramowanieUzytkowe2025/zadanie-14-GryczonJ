@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { fetchMovie, updateMovie, createMovie } from "../api/moviesApi";
+import { useContext } from "react";
+import { LoaderContext } from "../contexts/LoaderContext";
 import { toast } from "react-toastify";
 
 function MovieForm({ editMode }) {
@@ -15,7 +17,7 @@ function MovieForm({ editMode }) {
   });
   const [loading, setLoading] = useState(editMode);
   const [error, setError] = useState("");
-
+  const { showLoader, hideLoader } = useContext(LoaderContext);
 
   useEffect(() => {
     if (editMode) {
@@ -51,7 +53,8 @@ function MovieForm({ editMode }) {
 
     try {
       if (editMode) {
-        await updateMovie(id, movie);
+        await updateMovie(id, movie, { showLoader, hideLoader });
+        // await updateMovie(id, movie);
         toast.success("Poprawnie zapisano zmiany");
       } else {
         await createMovie(movie);
