@@ -1,5 +1,5 @@
-import { useContext } from "react";
-import { LoaderContext } from "../contexts/LoaderContext";
+// import { useContext } from "react";
+// import { LoaderContext } from "../contexts/LoaderContext";
 
 export const API_URL = "http://127.0.0.1:8000/filmy/";
 

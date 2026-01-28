@@ -15,6 +15,7 @@ echo.
 echo Sprawdzanie lokalizacji pliku main.py...
 if exist main.py (
     echo Plik main.py znaleziony. Uruchamiam API...
+    echo http://127.0.0.1:8000/docs
     "%PYTHON_PATH%" -m uvicorn main:app --reload
 ) else (
     echo ======================================================
